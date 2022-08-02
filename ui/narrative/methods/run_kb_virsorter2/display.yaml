@@ -1,10 +1,10 @@
 #
 # define display information
 #
-name: Method Name Here
+name: VirSorter2
 
 tooltip: |
-    Perform some kind of method
+    Identifies viral sequences from viral and microbial metagenomes
 
 screenshots: []
 
@@ -24,17 +24,120 @@ suggestions:
 # Configure the display and description of parameters
 #
 parameters :
-    parameter_1 :
-        ui-name : |
-            First parameter
-        short-hint : |
-            The first parameter
-        long-hint  : |
-            The first parameter that needs to be entered to drive the method. This might be the first of many.
+    genomes:
+        ui-name: |
+            Input contigs file
+        short-hint: |
+            A KBase Assembly or genome object containing microbial or viral (meta)genome sequences
+        long-hint: |
+            A KBase Assembly or genome object containing microbial or viral (meta)genome sequences
+
+    enable_dramv:
+        ui-name: |
+            Enable DRAMv outputs
+        short-hint: |
+            VirSorter2 will generate inputs suitable for DRAMv
+        long-hint: |
+            VirSorter2 will generate inputs suitable for DRAMv
+
+    exclude_short:
+        ui-name: |
+            Exclude short (<2 gene) sequences
+        short-hint: |
+            Short sequences (with less than 2 genes) with hallmark genes are included by default, flag to exclude
+        long-hint: |
+            Short sequences (with less than 2 genes) do not have any scores, but those with hallmark genes are included as viral by default; use this option to exclude them
+
+    require_all_hallmarks:
+        ui-name: |
+            Require hallmark genes on sequences
+        short-hint: |
+            Require hallmark gene on all sequences and give conservative set of high confidence viral contigs
+        long-hint: |
+            Require hallmark gene on all sequences and give conservative set of high confidence viral contigs
+
+    max_orfs:
+        ui-name: |
+            Max orfs used in calculating taxonomic features. Reduces computation. -1 disables (only provirus-off)
+        short-hint: |
+            Max number of orfs used to calculate taxonomic features. If exceeded, it is sub-sampled to reduce computation. -1 disables. Must be used with --provirus-off.
+        long-hint: |
+            Maximum number of orfs used for calculating taxonomic features. If the number of ords in a sequence exceeds this limit, it is sub-sampled to this number to reduce computation. To disable, set to -1; this option must be used together with --provirus-off option.
+
+    keep_original:
+        ui-name: |
+            Keep the original sequences instead of trimmed
+        short-hint: |
+            By default, untranslated regions at identified viral sequences are removed, as are overlaps within identified circular sequences
+        long-hint: |
+            By default, the untranslated regions at both ends of identified viral seqs are trimmed; circular sequences are modified to remove overlap between both ends and adjusted for the gene splitted into two ends
+
+    require_short_hallmarks:
+        ui-name: |
+            Require hallmark genes on short (RNA <5K; DNA <3K) sequences
+        short-hint: |
+            Require hallmark genes on short sequences. RNA virus < 5K and other viral groups < 3K are considered short; Reduce false positive with some sensitivity loss
+        long-hint: |
+            Require hallmark genes on short sequences. RNA virus < 5K and other viral groups < 3K are considered short; This can reduce false positive at reasonable cost of sensitivity
+
+    minimum_length:
+        ui-name: |
+            Minimum sequence length
+        short-hint: |
+            Minimum sequence length. All sequences below this cutoff are discarded
+        long-hint: |
+            Minimum sequence length. All sequences below this cutoff are discarded
+
+    highconfidence_only:
+        ui-name: |
+            Only output high confidence viral sequences
+        short-hint: |
+            Only output high confidence viral sequences, those with (max_score >= 0.9) OR (max_score >=0.7 AND hallmark >= 1)
+        long-hint: |
+            Only output high confidence viral sequences, this is equivalent to screening final-viral-score.tsv with the following criteria: (max_score >= 0.9) OR (max_score >=0.7 AND hallmark >= 1)
+
+    minimum_score:
+        ui-name: |
+            Minimum score to identify as viral
+        short-hint: |
+            Minimal score to be considered viral. All sequences below this cutoff are discarded
+        long-hint: |
+            Minimal score to be considered viral. All sequences below this cutoff are discarded
+
+    included_groups:
+        ui-name: |
+            Viral groups to be included
+        short-hint: |
+            Classifiers of viral groups to included
+        long-hint: |
+            Classifiers of viral groups to included (dsDNAphage,NCLDV,RNA,ssDNA,lavidaviridae)
+
+    disable_provirus:
+        ui-name: |
+            Disable provirus extraction
+        short-hint: |
+           By default, provirus regions are extracted after classifying full contig sequences
+        long-hint: |
+           By default, provirus regions are extacted after classifying viral sequences. Together with lower max-orf-per-seq, can significantly speed up a run
 
 description : |
-    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed pulvinar efficitur felis, quis tincidunt sem congue at. Vivamus ornare feugiat faucibus. Fusce tincidunt mattis nunc, nec varius purus convallis quis. Nulla facilisi. In at magna dolor. Suspendisse sit amet felis at arcu auctor dapibus vitae pharetra dui. Nam semper mi quis tortor fermentum mollis. Donec a arcu pharetra, rutrum dolor vitae, rutrum mauris. Donec ornare fringilla sagittis. Nam laoreet est in elementum malesuada. Vestibulum id mi eget urna hendrerit feugiat. Donec et ultrices nulla. Phasellus diam eros, dapibus at tempus nec, semper vel ante.</p>
+    <p>VirSorter2 is a DNA and RNA virus identification tool that leverages genome-informed database advances across
+    a collection of customized automatic classifiers to improve the accuracy and range of virus sequence detection.
+    When benchmarked against genomes from both isolated and uncultivated viruses, VirSorter2 uniquely performed
+    consistently with high accuracy (F1-score > 0.8) across viral diversity, while all other tools under-detected
+    viruses outside of the group most represented in reference databases (i.e., those in the order Caudovirales).
+    Among the tools evaluated, VirSorter2 was also uniquely able to minimize errors associated with atypical cellular
+    sequences including eukaryotic genomes and plasmids. Finally, as the virosphere exploration unravels novel viral
+    sequences, VirSorter2's modular design makes it inherently able to expand to new types of viruses via the design
+    of new classifiers to maintain maximal sensitivity and specificity.A more thorough description of this tool (and
+    the code it runs) is available at <a href="https://bitbucket.org/MAVERICLab/virsorter2">VirSorter2</a>.
 
-    <p>Curabitur auctor, metus at tristique euismod, odio elit tincidunt neque, a facilisis sem massa convallis dolor. Interdum et malesuada fames ac ante ipsum primis in faucibus. Nunc ut hendrerit tellus. Nunc lacinia laoreet finibus. Etiam vitae sagittis enim. Fusce consectetur porta est eu pretium. In hac habitasse platea dictumst. Integer pellentesque sit amet sapien id venenatis. Nullam ac risus at orci eleifend aliquet. Vestibulum elit purus, euismod a nibh quis, pellentesque semper leo. Curabitur ullamcorper felis hendrerit nunc egestas, sit amet pharetra sapien porttitor. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Maecenas hendrerit ipsum a ligula aliquet vestibulum. Duis a ante urna. Aenean ante neque, rhoncus id luctus ut, accumsan vel nunc.</p>
+    Briefly, this App will consume viral genomes (in KBase.Asssembly object format)
+    </p>
 
-    <p>Pellentesque accumsan aliquet magna, id consectetur tellus condimentum eu. Suspendisse elit dui, ornare ac leo eget, tincidunt feugiat orci. Maecenas auctor gravida lacinia. Mauris interdum nisi vel gravida varius. Nullam tempus, purus eget posuere aliquet, odio elit semper massa, quis facilisis massa odio vitae lacus. Fusce varius enim a mi vehicula tempus. Maecenas faucibus tellus ipsum, at venenatis ipsum auctor et. Suspendisse sem mi, dignissim id porta efficitur, auctor eget magna. Vivamus varius purus nulla, porttitor euismod lorem cursus quis. Nulla sit amet eros nec sem ultrices pulvinar.</p>
+publications :
+    -
+        display-text: |
+            Guo, J. et al. VirSorter2: a multi-classifier, expert-guided approach to detect diverse DNA and RNA viruses. Microbiome 9, 37 (2021). https://doi.org/10.1186/s40168-020-00990-y
+        link: https://pubmed.ncbi.nlm.nih.gov/33522966
+        pmid: 33522966
