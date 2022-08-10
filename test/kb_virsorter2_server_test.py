@@ -63,5 +63,23 @@ class kb_virsorter2Test(unittest.TestCase):
         #
         # Check returned data with
         # self.assertEqual(ret[...], ...) or other unittest methods
-        ret = self.serviceImpl.run_kb_virsorter2(self.ctx, {'workspace_name': self.wsName,
-                                                             'parameter_1': 'Hello World!'})
+
+        assembly_ref = "31160/20/1"
+
+        ret = self.serviceImpl.run_kb_virsorter2(
+            self.ctx,
+            {
+                'workspace_name': self.wsName,
+                'genomes': assembly_ref,
+                'enable_dramv': '1',  # Default = 0
+                'exclude_short': '0',  #
+                'require_all_hallmarks': '0',
+                'max_orfs': '-1',  # Default = -1 here, but repo is not
+                'keep_original': '0',  # Trim sequence
+                'require_short_hallmarks': '0',  # Don't require
+                'minimum_length': '0',  # No min length
+                'highconfidence_only': '0',
+                'minimum_score': '0.5',
+                'included_groups': 'dsDNAphage,ssDNA',
+                'disable_provirus': '0'
+            })
