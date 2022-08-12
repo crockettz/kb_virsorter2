@@ -1,6 +1,13 @@
 # kb_virsorter2 release notes
 =========================================
 
+0.0.4
+-----
+* Add saving VS2 results as downloads (boundary, scores, genome fasta)
+* Build assembly object
+* Add shock_id for DRAM-v compatibility
+* Build HTML report
+
 0.0.3
 -----
 * Added AssemblyUtil and DateFileUtil clients
