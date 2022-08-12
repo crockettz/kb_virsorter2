@@ -17,7 +17,7 @@ def run_virsorter2(genome_fp: Path, args, cpu_count, output_dir: Path):
     # --seqname-suffix-off, --viral-gene-required, --viral-gene-enrich-off
 
     # Need to "build up" command
-    virsorter_cmd = ['virsorter', 'run', '-w', str(output_dir), genome_fp, '-j', cpu_count]
+    virsorter_cmd = ['virsorter', 'run', '-w', str(output_dir), '-i', genome_fp, '-j', str(cpu_count)]
 
     bool_args = ['enable_dramv', 'exclude_short', 'require_all_hallmarks', 'keep_original',
                  'require_short_hallmarks', 'highconfidence_only', 'disable_provirus']  # Checkboxes
@@ -35,7 +35,9 @@ def run_virsorter2(genome_fp: Path, args, cpu_count, output_dir: Path):
     for numerical_arg, numerical_param in zip(numerical_args, numerical_params):
         virsorter_cmd.extend([numerical_param, args[numerical_arg]])
 
-    virsorter_cmd.extend(['--include-groups', args['included_groups']])
+    virsorter_cmd.extend(['--include-groups', args['included_groups'], '--use-conda-off', 'all'])
+
+    logging.info(f'Running VirSorter2 command:\n{" ".join(virsorter_cmd)}')
 
     ret = subprocess.run(virsorter_cmd, check=True)
 

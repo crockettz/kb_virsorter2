@@ -2,13 +2,15 @@
 Miscellaneous functions to handle kb_VirSorter2 that do not fall within running VirSorter2 proper
 '''
 import logging
+from pathlib import Path
 from Bio import SeqIO
 
+from installed_clients.KBaseReportClient import KBaseReport
 from installed_clients.WorkspaceClient import Workspace
 from installed_clients.AssemblyUtilClient import AssemblyUtil
 
 
-def process_kbase_objects(genomes_ref, shared_folder, callback, workspace, token):
+def process_kbase_object(genomes_ref, shared_folder, callback, workspace, token):
     """
     Convert KBase object(s) into usable files for VirSorter2
     :param genomes_ref: Viral genomes with KBase '#/#/#' used to describe each object
@@ -47,3 +49,16 @@ def process_kbase_objects(genomes_ref, shared_folder, callback, workspace, token
 
     return genomes_fp
 
+
+def generate_report(callback_url, token, workspace_name, shared_folder: Path, virsorter2_output: Path):
+    """
+    :param callback_url:
+    :param token: Job token
+    :param workspace_name: Workspace name
+    :param shared_folder: KBase working directory on the node, used to save the HTML file
+    :param virsorter2_output: VirSorter2 proper final results directory, should have the summary file
+    :return:
+    """
+
+    # Output folder containing information
+    vs2_outdir = virsorter2_output

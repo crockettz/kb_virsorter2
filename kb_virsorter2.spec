@@ -7,6 +7,8 @@ module kb_virsorter2 {
     typedef string obj_ref;
 
     typedef structure {
+        string workspace_name;
+        string workspace_id;
         string report_name;
         string report_ref;
         obj_ref genomes;
@@ -25,8 +27,8 @@ module kb_virsorter2 {
     } InParams;
 
     typedef structure{
-        string report_name
-        string report_ref
+        string report_name;
+        string report_ref;
         string result_directory;
         obj_ref binned_contig_obj_ref;
     } ReportResults;

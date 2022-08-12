@@ -10,13 +10,21 @@ MAINTAINER KBase Developer
 ENV PATH=/miniconda/bin:${PATH}
 
 # Install system dependencies
-RUN apt-get update && apt-get install -y build-essential
+RUN apt-get update && apt-get install -y build-essential wget ca-certificates
 
 # Install dependencies
-RUN conda install -y -c conda-forge mamba python=3.6
-RUN mamba install -y "python>=3.6" scikit-learn=0.22.1 imbalanced-learn pandas seaborn hmmer==3.3 prodigal screed ruamel.yaml "snakemake>=5.18,<=5.26" click
+RUN conda update -y -n base -c defaults conda  # Conda 4.10 *cannot* install python 3.10
+RUN conda install -y -c conda-forge -c defaults mamba "python=3.8"  # <3.10 for scikit-learn =1.0 else python<3.9=0.22.1
+# scikit-learn *must* be 0.22.1 to avoid UserWarnings and AttributeErrors due to updates in package dependencies
+RUN mamba install -y -c conda-forge -c bioconda "scikit-learn=0.22.1" \
+    imbalanced-learn "pandas=1.3.1" seaborn "hmmer!=3.3.1" prodigal \
+    "screed=1.0.5" ruamel.yaml "snakemake>=5.18,<=5.26" "click>=7" nose last ncbi-genome-download
 
 RUN git clone https://github.com/jiarong/VirSorter2.git && cd VirSorter2 && pip install .  # python -m pip
+
+RUN pip install jsonrpcbase
+
+RUN conda clean -y --all
 
 # generate template-config.yaml; db_dir ONLY for KBase app
 RUN virsorter config --init-source --db-dir /data/db

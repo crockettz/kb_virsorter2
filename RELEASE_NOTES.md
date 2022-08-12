@@ -1,6 +1,15 @@
 # kb_virsorter2 release notes
 =========================================
 
+0.0.3
+-----
+* Added AssemblyUtil and DateFileUtil clients
+* Fixed VS2 Dockerfile dependencies
+* Fixed inconsistencies between specs
+* Update Entrypoint for VS2 DB issue
+* Fix VS2 run command
+* WARNING: Module will run and VS2 will do so successfully, but KBase report isn't "connected", so overall will fail.
+
 0.0.2
 -----
 * Added VirSorter2 runner for underlying tool

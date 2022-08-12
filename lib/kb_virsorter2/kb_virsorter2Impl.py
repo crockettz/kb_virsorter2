@@ -3,10 +3,10 @@
 import logging
 import os
 import psutil
+from pathlib import Path
 
-from installed_clients.KBaseReportClient import KBaseReport
-from kb_virsorter2.kb_virmatcher_utils.virmatcher_utils import process_kbase_object, generate_report
-from kb_virsorter2.kb_virmatcher_utils.virmatcher_runner import run_virsorter2
+from kb_virsorter2.kb_virsorter2_utils.virsorter2_utils import process_kbase_object, generate_report
+from kb_virsorter2.kb_virsorter2_utils.virsorter2_runner import run_virsorter2
 #END_HEADER
 
 
@@ -37,7 +37,7 @@ class kb_virsorter2:
     def __init__(self, config):
         #BEGIN_CONSTRUCTOR
         self.callback_url = os.environ['SDK_CALLBACK_URL']
-        self.shared_folder = config['scratch']
+        self.shared_folder = Path(config['scratch'])
         self.ws_url = config['workspace-url']
         alt_cpu = psutil.cpu_count(logical=False)
         self.cpus = alt_cpu if alt_cpu < 32 else 32
@@ -68,28 +68,15 @@ class kb_virsorter2:
             genomes_ref, self.shared_folder, self.callback_url, self.ws_url, ctx['token']
         )
 
-        ####
+        # Run VirSorter2
         logging.info('Passing input sequences to VirSorter2')
         virsorter2_dir = self.shared_folder / 'VirSorter2_results'
         run_virsorter2(genomes_fp, params, self.cpus, virsorter2_dir)
 
-
-
-
-
-
-        logging.info('VirMatcher complete, sending results to KBase workspace')
+        # Parse results from VirSorter2
+        logging.info('VirSorter2 run complete, sending results to KBase workspace')
         report_info = generate_report(self.callback_url, ctx['token'], params.get('workspace_name'),
                                       self.shared_folder, virsorter2_dir)
-
-
-
-
-
-        report = KBaseReport(self.callback_url)
-        report_info = report.create({'report': {'objects_created':[],
-                                                'text_message': params['parameter_1']},
-                                                'workspace_name': params['workspace_name']})
         output = {
             'report_name': report_info['name'],
             'report_ref': report_info['ref'],
