@@ -73,6 +73,8 @@ class kb_virsorter2Test(unittest.TestCase):
                 'genomes': assembly_ref,
                 'enable_dramv': '1',  # Default = 0
                 'exclude_short': '0',  #
+                'viral_gene_required': '0',
+                'viral_gene_enrichment': '0',
                 'require_all_hallmarks': '0',
                 'max_orfs': '-1',  # Default = -1 here, but repo is not
                 'keep_original': '0',  # Trim sequence

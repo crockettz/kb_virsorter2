@@ -1,6 +1,17 @@
 # kb_virsorter2 release notes
 =========================================
 
+0.0.5
+-----
+* Updated binnedContig to assembly
+* Fixed "boolean" in runner code
+* Major overhaul/update to HTML report - +DataTables+SearchPanes+Buttons
+* Adjusted DRAM-v compatibility code
+* Fixed Pathing issues
+* Added --viral-gene-required and --viral-gene-enrich-off
+* Fixed output --> KBase report issue(s)
+* Updated server test with additional parameters
+
 0.0.4
 -----
 * Add saving VS2 results as downloads (boundary, scores, genome fasta)

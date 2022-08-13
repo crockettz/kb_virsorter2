@@ -18,28 +18,82 @@ from installed_clients.DataFileUtilClient import DataFileUtil
 
 html_template = Template("""<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <link href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css" rel="stylesheet">
+<head>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1.3/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css" rel="stylesheet">
+  <link href="https://cdn.datatables.net/buttons/2.2.3/css/buttons.dataTables.min.css" rel="stylesheet">
+  <link href="https://cdn.datatables.net/searchpanes/2.0.2/css/searchPanes.dataTables.min.css" rel="stylesheet">
+  <link href="https://cdn.datatables.net/select/1.4.0/css/select.dataTables.min.css" rel="stylesheet">
 
-    <script src="https://code.jquery.com/jquery-3.5.1.js" type="text/javascript"></script>
-    <script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js" type="text/javascript"></script>
+  <script src="https://code.jquery.com/jquery-3.5.1.js" type="text/javascript"></script>
+  <script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js" type="text/javascript"></script>
+  <script src="https://cdn.datatables.net/1.12.1/js/dataTables.bootstrap5.min.js" type="text/javascript"></script>
+  <script src="https://cdn.datatables.net/buttons/2.2.3/js/dataTables.buttons.min.js" type="text/javascript"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js" type="text/javascript"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js" type="text/javascript"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js" type="text/javascript"></script>
+  <script src="https://cdn.datatables.net/buttons/2.2.3/js/buttons.html5.min.js" type="text/javascript"></script>
+  <script src="https://cdn.datatables.net/buttons/2.2.3/js/buttons.print.min.js" type="text/javascript"></script>
+  <script src="https://cdn.datatables.net/searchpanes/2.0.2/js/dataTables.searchPanes.min.js" type="text/javascript"></script>
+  <script src="https://cdn.datatables.net/select/1.4.0/js/dataTables.select.min.js" type="text/javascript"></script>
 
-  </head>
+  <style>
+  tfoot input {
+    width: 100%;
+    padding: 3px;
+    box-sizing: border-box;
+  }
+  </style>
 
-  <body>
-    <div class="container">
-      <div>
-        ${html_table}
-      </div>  
-    </div>
+</head>
 
-    <script type="text/javascript">
-      $$(document).ready(function () {
-        $$('#my_dataframe').DataTable();
+<body>
+  <div class="container">
+    <div>
+      ${html_table}
+    </div>  
+  </div>
+
+  <script type="text/javascript">
+    $$(document).ready(function () {
+      // Setup - add a text input to each footer cell
+      $$('#my_dataframe tfoot th').each(function () {
+        var title = $$(this).text();
+        $$(this).html('<input type="text" placeholder="Search ' + title + '" />');
       });
-    </script>
 
-  </body>
+      // DataTable
+      var table = $$('#my_dataframe').DataTable({
+        dom: 'lPBfrtip',
+        buttons: [
+            'copy', 'csv', 'excel', 'pdf', 'print'
+        ],
+        initComplete: function () {
+          // Apply the search
+          this.api()
+          .columns()
+          .every(function () {
+            var that = this;
+
+            $$('input', this.footer()).on('keyup change clear', function () {
+              if (that.search() !== this.value) {
+                that.search(this.value).draw();
+              }
+            });
+          });
+        },
+      });
+
+      // Add buttons
+      // new $$.fn.dataTable.Buttons( table, {
+      //   buttons: [
+      //     'copy', 'excel', 'pdf', 'csv', 'print'
+      //   ]
+      // } );
+    });
+  </script>
+
+</body>
 </html>""")
 
 
@@ -101,11 +155,12 @@ def generate_report(callback_url, token, workspace_name, shared_folder: Path, vi
 
     report = KBaseReport(callback_url, token=token)
     dfu = DataFileUtil(callback_url, token=token)
+    au = AssemblyUtil(callback_url)
 
     # Need to archive VC2 output results - save the 3 output files so users can download
     boundary_fp = virsorter2_output / 'final-viral-boundary.tsv'
     fasta_fp = virsorter2_output / 'final-viral-combined.fa'
-    scores_fp = virsorter2_output / 'final-viral-scores.tsv'
+    scores_fp = virsorter2_output / 'final-viral-score.tsv'
 
     # Output directory to store HTML and final results files
     output_dir = shared_folder / str(uuid.uuid4())
@@ -132,7 +187,7 @@ def generate_report(callback_url, token, workspace_name, shared_folder: Path, vi
             tar_fh.add(fp, arcname=fp.name)
 
         export_fps.append({
-            'path': tar_fp,
+            'path': str(tar_fp),
             'name': tar_fp.name,
             'label': tar_fp.name,
             'description': desc
@@ -143,26 +198,32 @@ def generate_report(callback_url, token, workspace_name, shared_folder: Path, vi
     shutil.copy(fasta_fp, assembly_fp)
 
     created_objects = []
-    assembly_obj = AssemblyUtil.save_assembly_from_fasta({
-        'file': {
-            'path': str(assembly_fp)
-        },
-        'workspace_name': workspace_name,
-        'assembly_name': 'VirSorter2-Assembly'
-    })
+    assembly_obj = au.save_assembly_from_fasta(
+        {
+            'file': {
+                'path': str(assembly_fp)
+            },
+            'assembly_name': 'VirSorter2-Assembly',
+            'workspace_name': workspace_name
+        }
+    )
     created_objects.append({
         "ref": assembly_obj,
         "description": "KBase.Assembly object from VirSorter2"
     })
 
     # In the case for DRAM-v compatability, save DRAM-v input
-    affi_contigs_fp = virsorter2_output / 'affi-contigs.tab'
-    affi_contigs_shock_fp = output_dir / 'affi-contigs.tab'
-    shutil.copy(affi_contigs_fp, affi_contigs_shock_fp)
+    # Check if affi-contigs exist. *could* check for presence of --prep-for-dramv flag in params, or just file presence
+    affi_contigs_fp = virsorter2_output / 'for-dramv/affi-contigs.tab'
+    if affi_contigs_fp.exists():
+        affi_contigs_shock_fp = output_dir / 'affi-contigs.tab'
+        shutil.copy(affi_contigs_fp, affi_contigs_shock_fp)
 
-    affi_contigs_shock_id = dfu.file_to_shock({
-        'file_path': affi_contigs_shock_fp
-    })['shock_id']
+        affi_contigs_shock_id = dfu.file_to_shock({
+            'file_path': str(affi_contigs_shock_fp)
+        })['shock_id']
+    else:
+        affi_contigs_shock_id = None
 
     # Create HTML report that incorporates and displays the virus scores to allow users to go through results
     scores_df = pd.read_csv(scores_fp, header=0, index_col=None, delimiter='\t')
@@ -195,8 +256,7 @@ def generate_report(callback_url, token, workspace_name, shared_folder: Path, vi
 
     report_params = {'message': 'Results from your VirSorter2 run. Above you\'ll find a report with the identified,'
                                 '*putative* virus genomes, and below, downloadable links to the results files and links'
-                                ' to the KBase assembly object.\n. For users who enabled DRAM-v compatibility, the '
-                                f'shock ID is {affi_contigs_shock_id}',
+                                ' to the KBase assembly object.\n',
                      'workspace_name': workspace_name,
                      'html_links': html_report,  # +1 HTML file in output_dir
                      'file_links': export_fps,  # 3 results files in output_dir
@@ -204,6 +264,10 @@ def generate_report(callback_url, token, workspace_name, shared_folder: Path, vi
                      'report_object_name': f'VirSorter2_report_{str(uuid.uuid4())}',
                      'objects_created': created_objects  # KBase assembly
                      }  # Also shock_id for affi-contigs in output_dir
+
+    if affi_contigs_shock_id:
+        report_params['message'] += f'For users who enabled DRAM-v compatibility, the ' \
+                                    f'shock ID is {affi_contigs_shock_id}'
 
     report_output = report.create_extended_report(report_params)
 

@@ -184,6 +184,30 @@
                 "unchecked_value": "0",
                 "checked_value": "1"
             }
+        },
+        {
+            "id": "viral_gene_required",
+            "optional": true,
+            "advanced": true,
+            "allow_multiple": false,
+            "default_values": [ "0" ],
+            "field_type": "checkbox",
+            "checkbox_options": {
+                "unchecked_value": "0",
+                "checked_value": "1"
+            }
+        },
+        {
+            "id": "viral_gene_enrichment",
+            "optional": true,
+            "advanced": true,
+            "allow_multiple": false,
+            "default_values": [ "0" ],
+            "field_type": "checkbox",
+            "checkbox_options": {
+                "unchecked_value": "0",
+                "checked_value": "1"
+            }
         }
     ],
     "behavior": {
@@ -258,8 +282,8 @@
                     "service_method_output_path": [0, "report_ref"],
                     "target_property": "report_ref"
                 },{
-                    "service_method_output_path": [0,"binned_contig_obj_ref"],
-                    "target_property": "binned_contig_obj_ref"
+                    "service_method_output_path": [0,"assembly_obj_ref"],
+                    "target_property": "assembly_obj_ref"
                 },
                 {
                     "service_method_output_path": [0, "result_directory"],

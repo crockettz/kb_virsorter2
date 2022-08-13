@@ -12,17 +12,19 @@ module kb_virsorter2 {
         string report_name;
         string report_ref;
         obj_ref genomes;
-        string enable_dramv;
-        string exclude_short;
-        string require_all_hallmarks;
-        string max_orfs;
-        string keep_original;
-        string require_short_hallmarks;
-        string minimum_length;
-        string highconfidence_only;
         string minimum_score;
-        string included_groups;
+        string minimum_length;
+        string keep_original;
+        string exclude_short;
+        string enable_dramv;
+        string highconfidence_only;
+        string require_all_hallmarks;
+        string require_short_hallmarks;
+        string max_orfs;
+        string viral_gene_required;
+        string viral_gene_enrichment;
         string disable_provirus;
+        string included_groups;
 
     } InParams;
 
@@ -30,7 +32,7 @@ module kb_virsorter2 {
         string report_name;
         string report_ref;
         string result_directory;
-        obj_ref binned_contig_obj_ref;
+        obj_ref assembly_obj_ref;
     } ReportResults;
 
     /*

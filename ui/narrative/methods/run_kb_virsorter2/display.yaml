@@ -32,53 +32,13 @@ parameters :
         long-hint: |
             A KBase Assembly or genome object containing microbial or viral (meta)genome sequences
 
-    enable_dramv:
+    minimum_score:
         ui-name: |
-            Enable DRAMv outputs
+            Minimum score to identify as viral
         short-hint: |
-            VirSorter2 will generate inputs suitable for DRAMv
+            Minimal score to be considered viral. All sequences below this cutoff are discarded
         long-hint: |
-            VirSorter2 will generate inputs suitable for DRAMv
-
-    exclude_short:
-        ui-name: |
-            Exclude short (<2 gene) sequences
-        short-hint: |
-            Short sequences (with less than 2 genes) with hallmark genes are included by default, flag to exclude
-        long-hint: |
-            Short sequences (with less than 2 genes) do not have any scores, but those with hallmark genes are included as viral by default; use this option to exclude them
-
-    require_all_hallmarks:
-        ui-name: |
-            Require hallmark genes on sequences
-        short-hint: |
-            Require hallmark gene on all sequences and give conservative set of high confidence viral contigs
-        long-hint: |
-            Require hallmark gene on all sequences and give conservative set of high confidence viral contigs
-
-    max_orfs:
-        ui-name: |
-            Max orfs used in calculating taxonomic features. Reduces computation. -1 disables (only provirus-off)
-        short-hint: |
-            Max number of orfs used to calculate taxonomic features. If exceeded, it is sub-sampled to reduce computation. -1 disables. Must be used with --provirus-off.
-        long-hint: |
-            Maximum number of orfs used for calculating taxonomic features. If the number of ords in a sequence exceeds this limit, it is sub-sampled to this number to reduce computation. To disable, set to -1; this option must be used together with --provirus-off option.
-
-    keep_original:
-        ui-name: |
-            Keep the original sequences instead of trimmed
-        short-hint: |
-            By default, untranslated regions at identified viral sequences are removed, as are overlaps within identified circular sequences
-        long-hint: |
-            By default, the untranslated regions at both ends of identified viral seqs are trimmed; circular sequences are modified to remove overlap between both ends and adjusted for the gene splitted into two ends
-
-    require_short_hallmarks:
-        ui-name: |
-            Require hallmark genes on short (RNA <5K; DNA <3K) sequences
-        short-hint: |
-            Require hallmark genes on short sequences. RNA virus < 5K and other viral groups < 3K are considered short; Reduce false positive with some sensitivity loss
-        long-hint: |
-            Require hallmark genes on short sequences. RNA virus < 5K and other viral groups < 3K are considered short; This can reduce false positive at reasonable cost of sensitivity
+            Minimal score to be considered viral. All sequences below this cutoff are discarded
 
     minimum_length:
         ui-name: |
@@ -88,21 +48,86 @@ parameters :
         long-hint: |
             Minimum sequence length. All sequences below this cutoff are discarded
 
+    keep_original:
+        ui-name: |
+            Keep the original sequences instead of trimmed
+        short-hint: |
+            By default, the untranslated regions at both ends of identified viral seqs are trimmed, circular sequences are modified to remove overlap between both ends
+        long-hint: |
+            By default, the untranslated regions at both ends of identified viral seqs are trimmed; circular sequences are modified to remove overlap between both ends and adjusted for the gene split into two ends
+
+    exclude_short:
+        ui-name: |
+            Discard short sequences (<2 genes) with hallmarks
+        short-hint: |
+            Discard short sequences (with less than 2 genes) that contain at least one hallmark gene
+        long-hint: |
+            Discard short sequences (with less than 2 genes) that contain at least one hallmark gene. By default, these are included in the results.
+
+    enable_dramv:
+        ui-name: |
+            Enable DRAM-v outputs
+        short-hint: |
+            Generate affi-contigs.tab file for use in DRAM-v
+        long-hint: |
+            Generate affi-contigs.tab file for use in DRAM-v. In KBase, this will provide the shock_id for the tab file
+
     highconfidence_only:
         ui-name: |
-            Only output high confidence viral sequences
+            Only output high confidence viral sequences (max_score >= 0.9) OR (max_score >=0.7 AND hallmark >= 1)
         short-hint: |
             Only output high confidence viral sequences, those with (max_score >= 0.9) OR (max_score >=0.7 AND hallmark >= 1)
         long-hint: |
             Only output high confidence viral sequences, this is equivalent to screening final-viral-score.tsv with the following criteria: (max_score >= 0.9) OR (max_score >=0.7 AND hallmark >= 1)
 
-    minimum_score:
+    require_all_hallmarks:
         ui-name: |
-            Minimum score to identify as viral
+            Require hallmark genes on ALL sequences
         short-hint: |
-            Minimal score to be considered viral. All sequences below this cutoff are discarded
+            Require hallmark gene on all sequences to give a conservative set of high confidence viral contigs
         long-hint: |
-            Minimal score to be considered viral. All sequences below this cutoff are discarded
+            Require hallmark gene on all sequences to give a conservative set of high confidence viral contigs. All predicted sequences will contain one or more hallmark genes.
+
+    require_short_hallmarks:
+        ui-name: |
+            Require hallmark genes on short (RNA <5K; DNA <3K) sequences. May reduce false positives
+        short-hint: |
+            Require hallmark genes on short sequences. RNA virus < 5K and other viral groups < 3K are considered short; Reduce false positive with some sensitivity loss
+        long-hint: |
+            Require hallmark genes on short sequences. RNA virus < 5K and other viral groups < 3K are considered short; This can reduce false positive at reasonable cost of sensitivity
+
+    max_orfs:
+        ui-name: |
+            Max orfs used in calculating taxonomic features. Reduces computation. -1 disables (only provirus-off)
+        short-hint: |
+            Max number of orfs used to calculate taxonomic features. If exceeded, it is sub-sampled to reduce computation. -1 disables. Must be used with disable_provirus.
+        long-hint: |
+            Maximum number of orfs used for calculating taxonomic features. If the number of ords in a sequence exceeds this limit, it is sub-sampled to this number to reduce computation. To disable, set to -1; this option must be used together with disable_provirus option.
+
+    # New!
+    viral_gene_required:
+        ui-name: |
+            Require viral genes to be annotated. Can reduce false positives
+        short-hint: |
+            Require that viral genes to be annotated. Will remove putative viral sequences without annotation
+        long-hint: |
+            Require that viral genes to be annotated. Will remove putative viral sequences without annotation. This can reduce false positives at reasonable cost to sensitivity
+
+    viral_gene_enrichment:
+        ui-name: |
+            Disable requiring more viral genes than cellular to call full sequence viral
+        short-hint: |
+            Disable requiring more viral than cellular genes for calling full sequence viral. Useful for DRAM-v output when other tools identified viral sequences
+        long-hint: |
+            Disable requiring more viral than cellular genes for calling full sequence viral. This is useful when only using VirSorter2 to produce DRAMv input with viral sequence identified from other tools, or those trimmed by checkV
+
+    disable_provirus:
+        ui-name: |
+            Disable provirus extraction after classifying full contigs
+        short-hint: |
+            By default, provirus regions are extracted after classifying full contig sequences. This will disable it.
+        long-hint: |
+            By default, provirus regions are extracted after classifying full contig sequences. This will disable it. Together with lower max_orfs, can significantly speed up a run.
 
     included_groups:
         ui-name: |
@@ -112,13 +137,6 @@ parameters :
         long-hint: |
             Classifiers of viral groups to included (dsDNAphage,NCLDV,RNA,ssDNA,lavidaviridae)
 
-    disable_provirus:
-        ui-name: |
-            Disable provirus extraction
-        short-hint: |
-           By default, provirus regions are extracted after classifying full contig sequences
-        long-hint: |
-           By default, provirus regions are extacted after classifying viral sequences. Together with lower max-orf-per-seq, can significantly speed up a run
 
 description : |
     <p>VirSorter2 is a DNA and RNA virus identification tool that leverages genome-informed database advances across

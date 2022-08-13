@@ -77,18 +77,18 @@ class kb_virsorter2:
         logging.info('VirSorter2 run complete, sending results to KBase workspace')
         report_info = generate_report(self.callback_url, ctx['token'], params.get('workspace_name'),
                                       self.shared_folder, virsorter2_dir)
-        output = {
+        report_output = {
             'report_name': report_info['name'],
             'report_ref': report_info['ref'],
         }
         #END run_kb_virsorter2
 
         # At some point might do deeper type checking...
-        if not isinstance(output, dict):
+        if not isinstance(report_output, dict):
             raise ValueError('Method run_kb_virsorter2 return value ' +
                              'output is not type dict as required.')
         # return the results
-        return [output]
+        return [report_output]
     def status(self, ctx):
         #BEGIN_STATUS
         returnVal = {'state': "OK",

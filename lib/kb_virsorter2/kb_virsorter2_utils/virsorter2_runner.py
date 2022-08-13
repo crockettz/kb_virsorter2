@@ -13,19 +13,20 @@ def run_virsorter2(genome_fp: Path, args, cpu_count, output_dir: Path):
     :return:
     """
 
-    # TODO Not included
-    # --seqname-suffix-off, --viral-gene-required, --viral-gene-enrich-off
+    # TODO Not included --seqname-suffix-off
 
     # Need to "build up" command
     virsorter_cmd = ['virsorter', 'run', '-w', str(output_dir), '-i', genome_fp, '-j', str(cpu_count)]
 
     bool_args = ['enable_dramv', 'exclude_short', 'require_all_hallmarks', 'keep_original',
-                 'require_short_hallmarks', 'highconfidence_only', 'disable_provirus']  # Checkboxes
+                 'require_short_hallmarks', 'highconfidence_only', 'disable_provirus',
+                 'viral_gene_required', 'viral_gene_enrichment']  # Checkboxes
     bool_params = ['--prep-for-dramv', '--exclude-lt2gene', '--hallmark-required', '--keep-original-seq',
-                   '--hallmark-required-on-short', '--high-confidence-only', '--provirus-off']
+                   '--hallmark-required-on-short', '--high-confidence-only', '--provirus-off',
+                   '--viral-gene-required', '--viral-gene-enrich-off']
 
     for bool_arg, bool_param in zip(bool_args, bool_params):
-        if args[bool_arg] == 1:
+        if args[bool_arg] == '1':
             virsorter_cmd.extend([bool_param])
 
     # Numerical
