@@ -24,9 +24,10 @@ elif [ "${1}" = "init" ] ; then
   find /data/db -type f -exec chmod 644 {} \;
 #  chmod 755 /data/db/conda_envs/d8b54744
   if [[ -d "db/hmm" && -d "db/rbs" && -d "db/group" ]]; then
+    echo "Database setup completed successfully"
     touch __READY__
   else
-    echo "init failed"
+    echo "Initialization failed"
   fi
 
 elif [ "${1}" = "bash" ] ; then
