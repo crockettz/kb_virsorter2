@@ -1,6 +1,10 @@
 # kb_virsorter2 release notes
 =========================================
 
+0.0.6
+-----
+* Address VS2 DB setup issue
+
 0.0.5
 -----
 * Updated binnedContig to assembly

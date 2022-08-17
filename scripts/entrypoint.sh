@@ -17,9 +17,9 @@ elif [ "${1}" = "async" ] ; then
   sh ./scripts/run_async.sh
 elif [ "${1}" = "init" ] ; then
   echo "Initialize module"
-  cd /data
+  cd /data || exit 1
   echo "Downloading VirSorter2 database"
-  wget --no-check-certificate -O db.tgz https://osf.io/v46sc/download && tar xzf db.tgz && rm -rf db.tgz
+  wget --no-check-certificate -q -O db.tgz https://osf.io/v46sc/download && tar xzf db.tgz && rm -rf db.tgz
   find /data/db -type d -exec chmod 755 {} \;
   find /data/db -type f -exec chmod 644 {} \;
 #  chmod 755 /data/db/conda_envs/d8b54744
