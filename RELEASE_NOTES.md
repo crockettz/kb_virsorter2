@@ -1,6 +1,10 @@
 # kb_virsorter2 release notes
 =========================================
 
+0.0.9
+-----
+* Fix subprocess arg error
+
 0.0.8
 -----
 * Fix f-string error
