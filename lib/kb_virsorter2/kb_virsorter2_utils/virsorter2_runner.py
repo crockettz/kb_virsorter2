@@ -26,8 +26,11 @@ def run_virsorter2(genome_fp: Path, args, cpu_count, output_dir: Path):
                    '--viral-gene-required', '--viral-gene-enrich-off']
 
     for bool_arg, bool_param in zip(bool_args, bool_params):
-        if args[bool_arg] == '1':
-            virsorter_cmd.extend([bool_param])
+        try:
+            if args[bool_arg] == '1':
+                virsorter_cmd.extend([bool_param])
+        except KeyError:  # arg not present (i.e. KBase user doesn't provide)
+            print(f'{bool_arg} not provided, using default.')
 
     # Numerical
     numerical_args = ['minimum_score', 'minimum_length', 'max_orfs']

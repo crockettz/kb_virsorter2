@@ -1,6 +1,10 @@
 # kb_virsorter2 release notes
 =========================================
 
+0.0.7
+-----
+* Fix KeyError from users not providing optional arguments
+
 0.0.6
 -----
 * Address VS2 DB setup issue
