@@ -1,6 +1,11 @@
 # kb_virsorter2 release notes
 =========================================
 
+0.0.8
+-----
+* Fix f-string error
+* Fix potential error related to --included-groups in spec.json
+
 0.0.7
 -----
 * Fix KeyError from users not providing optional arguments

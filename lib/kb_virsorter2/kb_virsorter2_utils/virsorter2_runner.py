@@ -37,11 +37,13 @@ def run_virsorter2(genome_fp: Path, args, cpu_count, output_dir: Path):
     numerical_params = ['--min-score', '--min-length', '--max-orf-per-seq']
 
     for numerical_arg, numerical_param in zip(numerical_args, numerical_params):
-        virsorter_cmd.extend([numerical_param, args[numerical_arg]])
+        virsorter_cmd.extend([numerical_param, args[numerical_arg]])  # Should be passed as str?
+
+    # TODO Check if --include-groups is passed as list for multiple?
 
     virsorter_cmd.extend(['--include-groups', args['included_groups'], '--use-conda-off', 'all'])
 
-    logging.info(f'Running VirSorter2 command:\n{" ".join(virsorter_cmd)}')
+    logging.info(f'Running VirSorter2 command:\n{" ".join([str(cmd) for cmd in virsorter_cmd])}')
 
     ret = subprocess.run(virsorter_cmd, check=True)
 
