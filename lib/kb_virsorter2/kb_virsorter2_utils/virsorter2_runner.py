@@ -8,7 +8,8 @@ def run_virsorter2(genome_fp: Path, args, cpu_count, output_dir: Path):
 
     Note - does not require decoy virus info because it is now embedded in package
     :param genome_fp:
-    :param host_cpu_count:
+    :param args:
+    :param cpu_count:
     :param output_dir:
     :return:
     """
@@ -39,9 +40,12 @@ def run_virsorter2(genome_fp: Path, args, cpu_count, output_dir: Path):
     for numerical_arg, numerical_param in zip(numerical_args, numerical_params):
         virsorter_cmd.extend([numerical_param, str(args[numerical_arg])])
 
-    # TODO Check if --include-groups is passed as list for multiple?
+    # List of ,-joined elements
+    included_groups = ','.join(args['included_groups'])
+    virsorter_cmd.extend(['--include-groups', included_groups])
 
-    virsorter_cmd.extend(['--include-groups', args['included_groups'], '--use-conda-off', 'all'])
+    # Closing
+    virsorter_cmd.extend(['--use-conda-off', 'all'])
 
     logging.info(f'Running VirSorter2 command:\n{" ".join([str(cmd) for cmd in virsorter_cmd])}')
 

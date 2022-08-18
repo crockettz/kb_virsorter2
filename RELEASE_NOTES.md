@@ -1,6 +1,10 @@
 # kb_virsorter2 release notes
 =========================================
 
+0.0.10
+-----
+* Fix --include-groups error
+
 0.0.9
 -----
 * Fix subprocess arg error
