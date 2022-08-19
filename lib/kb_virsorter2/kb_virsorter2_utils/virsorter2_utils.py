@@ -15,6 +15,7 @@ from installed_clients.KBaseReportClient import KBaseReport
 from installed_clients.WorkspaceClient import Workspace
 from installed_clients.AssemblyUtilClient import AssemblyUtil
 from installed_clients.DataFileUtilClient import DataFileUtil
+from installed_clients.MetagenomeUtilsClient import MetagenomeUtils
 
 html_template = Template("""<!DOCTYPE html>
 <html lang="en">
@@ -97,7 +98,7 @@ html_template = Template("""<!DOCTYPE html>
 </html>""")
 
 
-def process_kbase_object(genomes_ref, shared_folder, callback, workspace, token):
+def process_kbase_object(genomes_ref, shared_folder: Path, callback, workspace, token):
     """
     Convert KBase object(s) into usable files for VirSorter2
     :param genomes_ref: Viral genomes with KBase '#/#/#' used to describe each object
@@ -110,31 +111,97 @@ def process_kbase_object(genomes_ref, shared_folder, callback, workspace, token)
 
     ws = Workspace(workspace, token=token)
     au = AssemblyUtil(callback, token=token)
+    dfu = DataFileUtil(callback, token=token)
+    mgu = MetagenomeUtils(callback, token=token)
 
     # Need to determine KBase type in order to know how to properly proceed
     genomes_type = ws.get_object_info3({'objects': [{'ref': genomes_ref}]})['infos'][0][2].split('-')[0]
 
     logging.info(f'Input type identified as: {genomes_type}')
 
-    if genomes_type == 'KBaseGenomes.Genomes':  # TODO Get genomes working
-        genome_data = ws.get_objects2({'objects': [
-            {'ref': genomes_ref}]})['data'][0]['data']
-        genome_data.get('contigset_ref') or genome_data.get('assembly_ref')
+    # TODO "KBaseMetagenomes.Genomes"
+    # TODO "KBaseSets.GenomeSet" OR "KBaseSearch.GenomeSet"
 
-        genomes_fp = None
+    if genomes_type in ['KBaseGenomes.Genome', 'KBaseGenomeAnnotations.Assembly', 'KBaseGenomes.ContigSet']:
 
-    elif genomes_type == 'KBaseGenomeAnnotations.Assembly':
-        genomes_fp = au.get_assembly_as_fasta({'ref': genomes_ref})['path']
+        if genomes_type == 'KBaseGenomes.Genome':  # Does KBaseGenomes.Genomes exist?
+
+            data = ws.get_objects2(
+                {'objects': [
+                    {'ref': genomes_ref,
+                     'included': ['assembly_ref'],
+                     'strict_maps': 1}]
+                })['data'][0]['data']
+
+            genome_ref = data['assembly_ref']
+
+            records_ref = genome_ref
+
+        elif genomes_type in ['KBaseGenomeAnnotations.Assembly', 'KBaseGenomes.ContigSet']:
+            records_ref = genomes_ref
+
+        else:
+            raise ValueError(f'{genomes_type} is not supported.')
+
+        records_fp = au.get_assembly_as_fasta({'ref': records_ref})['path']
+
+        if not Path(records_fp).is_file():
+            raise ValueError('Error generating fasta file from an Assembly or ContigSet with AssemblyUtil')
+
+        records = SeqIO.parse(records_fp, 'fasta')
+        virus_count = len(list(records))
+
+    # For "sets" (including BinnedContigs), want to *merge* sequence files
+    elif genomes_type == 'KBaseSets.AssemblySet':
+        assemblyset_data = dfu.get_objects({'object_refs': [genomes_ref]})['data'][0]
+
+        assemblyset_records = []
+        for assemblySet in assemblyset_data['data']['items']:
+            assembly_fp = au.get_assembly_as_fasta({'ref': assemblySet['ref']})['path']
+
+            suffix = Path(assembly_fp).suffix
+            if suffix in ['.fasta', '.fna', '.fa']:  # Must be fasta to be consumed
+
+                assemblyset_record = SeqIO.parse(assembly_fp, 'fasta')
+                assemblyset_records.extend(assemblyset_record)
+
+            else:
+                raise ValueError(f'{suffix} is not supported as a KBaseSets.AssemblySet object.')
+
+        records_fp = shared_folder / 'KBaseSets.AssemblySet.fasta'
+        SeqIO.write(assemblyset_records, records_fp, 'fasta')
+
+        virus_count = len(assemblyset_records)
+
+    elif genomes_type == 'KBaseMetagenomes.BinnedContigs':
+
+        binned_contig_dir = mgu.binned_contigs_to_file(
+            {
+                'input_ref': genomes_ref,
+                'save_to_shock': 0
+            }
+        )['bin_file_directory']  # Dict of bin_file_dir and shock_id
+
+        binnedcontg_records = []
+        for (dirpath, dirnames, fns) in os.walk(binned_contig_dir):  # Dirnames = all folders under dirpath
+            for fn in fns:
+
+                binnedcontig_fp = Path(dirpath) / fn
+
+                binnedcontg_record = SeqIO.parse(binnedcontig_fp, 'fasta')
+                binnedcontg_records.extend(binnedcontg_record)
+
+        records_fp = shared_folder / 'KBaseMetagenomes.BinnedContigs.fasta'
+        SeqIO.write(binnedcontg_records, records_fp, 'fasta')
+
+        virus_count = len(binnedcontg_records)
 
     else:
         raise ValueError(f'{genomes_type} is not supported.')
 
-    records = SeqIO.parse(genomes_fp, 'fasta')
-    virus_count = len(list(records))
-
     logging.info(f'{virus_count} sequences were identified.')
 
-    return genomes_fp
+    return records_fp
 
 
 def generate_report(callback_url, token, workspace_name, shared_folder: Path, virsorter2_output: Path):

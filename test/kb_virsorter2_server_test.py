@@ -64,13 +64,18 @@ class kb_virsorter2Test(unittest.TestCase):
         # Check returned data with
         # self.assertEqual(ret[...], ...) or other unittest methods
 
-        assembly_ref = "31160/20/1"
+        # Local tests
+        raw_assembly_ref = "31160/20/1"  # KBaseGenomeAnnotations.Assembly-3.0 --> verified working
+        genome_ref = "31160/82/1"  # KBaseGenomes.Genome-11.0 / VirSorter-Category-2_Genome --> verified working
+        bins_ref = "31160/72/1"  # KBaseMetagenomes.BinnedContigs-1.0 / VirSorter_binnedContigs --> verified working
+        assembly_set_ref = "31160/80/1"  # KBaseSets.AssemblySet‑1.2 / VirSorter-cat1256-AssemblySet --> verified works
+        contigset_ref = ""  # TODO KBaseGenomes.ContigSet
 
         ret = self.serviceImpl.run_kb_virsorter2(
             self.ctx,
             {
                 'workspace_name': self.wsName,
-                'genomes': assembly_ref,
+                'genomes': assembly_set_ref,
                 'enable_dramv': '1',  # Default = 0
                 'exclude_short': '0',  #
                 'viral_gene_required': '0',
@@ -82,6 +87,6 @@ class kb_virsorter2Test(unittest.TestCase):
                 'minimum_length': '0',  # No min length
                 'highconfidence_only': '0',
                 'minimum_score': '0.5',
-                'included_groups': 'dsDNAphage,ssDNA',
+                'included_groups': ['dsDNAphage', 'ssDNA'],
                 'disable_provirus': '0'
             })

@@ -17,7 +17,7 @@ def run_virsorter2(genome_fp: Path, args, cpu_count, output_dir: Path):
     # TODO Not included --seqname-suffix-off
 
     # Need to "build up" command
-    virsorter_cmd = ['virsorter', 'run', '-w', str(output_dir), '-i', genome_fp, '-j', str(cpu_count)]
+    virsorter_cmd = ['virsorter', 'run', '-w', str(output_dir), '-i', str(genome_fp), '-j', str(cpu_count)]
 
     bool_args = ['enable_dramv', 'exclude_short', 'require_all_hallmarks', 'keep_original',
                  'require_short_hallmarks', 'highconfidence_only', 'disable_provirus',

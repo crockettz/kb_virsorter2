@@ -150,7 +150,8 @@ description : |
     of new classifiers to maintain maximal sensitivity and specificity.A more thorough description of this tool (and
     the code it runs) is available at <a href="https://bitbucket.org/MAVERICLab/virsorter2">VirSorter2</a>.
 
-    Briefly, this App will consume viral genomes (in KBase.Asssembly object format)
+    Briefly, this App will consume viral genomes (in several KBase object formats) and generate predicted viral
+    sequences (KBase.Assembly).
     </p>
 
 publications :

@@ -21,13 +21,16 @@
                 "valid_ws_types": [
                     "KBaseGenomeAnnotations.Assembly",
                     "KBaseGenomes.Genome",
-                    "KBaseMetagenomes.Genomes"]
+                    "KBaseSets.AssemblySet",
+                    "KBaseMetagenomes.BinnedContigs",
+                    "KBaseGenomes.ContigSet"
+                ]
             }
         },
         {
             "id": "enable_dramv",
             "optional": true,
-            "advanced": true,
+            "advanced": false,
             "allow_multiple": false,
             "default_values": [ "0" ],
             "field_type": "checkbox",
@@ -123,7 +126,7 @@
         {
             "id": "minimum_score",
             "optional": true,
-            "advanced": true,
+            "advanced": false,
             "allow_multiple": false,
             "default_values": [ "0.5" ],
             "field_type": "text",
@@ -136,7 +139,7 @@
         {
             "id": "included_groups",
             "optional": true,
-            "advanced": true,
+            "advanced": false,
             "allow_multiple": true,
             "default_values": [ "dsDNAphage" ],
             "field_type": "dropdown",

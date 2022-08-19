@@ -1,8 +1,16 @@
 # kb_virsorter2 release notes
 =========================================
 
+0.0.11
+------
+* Added KBaseMetagenomes.BinnedContigs as input type
+* Added KBaseSets.AssemblySet as input type
+* Added KBaseGenomes.ContigSet as input type
+* Fixed potential Pathlib-subprocess error
+* NOTE: All "grouped" objects are reduced to flat FASTA files, dropping any grouping information (other than what might be stored in deflines)
+
 0.0.10
------
+------
 * Fix --include-groups error
 
 0.0.9
