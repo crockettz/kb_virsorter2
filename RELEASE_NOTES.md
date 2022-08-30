@@ -1,6 +1,10 @@
 # kb_virsorter2 release notes
 =========================================
 
+0.0.14
+------
+* Further investigating of enabled flags
+
 0.0.13
 ------
 * Investigate affi contigs filenaming for DRAM-v
