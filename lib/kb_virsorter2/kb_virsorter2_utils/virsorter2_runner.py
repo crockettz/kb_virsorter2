@@ -29,6 +29,7 @@ def run_virsorter2(genome_fp: Path, args, cpu_count, output_dir: Path):
     for bool_arg, bool_param in zip(bool_args, bool_params):
         print(f'{bool_arg}, {bool_param}')
         try:
+            print('---', args[bool_arg])
             if args[bool_arg] == '1':
                 print(f'{bool_arg} flag enabled.')
                 virsorter_cmd.extend([bool_param])
