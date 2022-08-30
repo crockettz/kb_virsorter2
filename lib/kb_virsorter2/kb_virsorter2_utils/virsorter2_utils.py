@@ -281,7 +281,7 @@ def generate_report(callback_url, token, workspace_name, shared_folder: Path, vi
 
     # In the case for DRAM-v compatability, save DRAM-v input
     # Check if affi-contigs exist. *could* check for presence of --prep-for-dramv flag in params, or just file presence
-    affi_contigs_fp = virsorter2_output / 'for-dramv/affi-contigs.tab'
+    affi_contigs_fp = virsorter2_output / 'for-dramv/viral-affi-contigs-for-dramv.tab'
     if affi_contigs_fp.exists():
         affi_contigs_shock_fp = output_dir / 'affi-contigs.tab'
         shutil.copy(affi_contigs_fp, affi_contigs_shock_fp)
@@ -290,7 +290,7 @@ def generate_report(callback_url, token, workspace_name, shared_folder: Path, vi
             'file_path': str(affi_contigs_shock_fp)
         })['shock_id']
     else:
-        affi_contigs_shock_id = None
+        affi_contigs_shock_id = False
 
     # Create HTML report that incorporates and displays the virus scores to allow users to go through results
     scores_df = pd.read_csv(scores_fp, header=0, index_col=None, delimiter='\t')
