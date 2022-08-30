@@ -1,6 +1,10 @@
 # kb_virsorter2 release notes
 =========================================
 
+0.0.16
+------
+* Almost finished flags...
+
 0.0.15
 ------
 * Almost finished flags...
