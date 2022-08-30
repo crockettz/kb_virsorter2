@@ -1,6 +1,10 @@
 # kb_virsorter2 release notes
 =========================================
 
+0.0.13
+------
+* Investigate affi contigs filenaming for DRAM-v
+
 0.0.12
 ------
 * Fix affi contigs filenaming for DRAM-v

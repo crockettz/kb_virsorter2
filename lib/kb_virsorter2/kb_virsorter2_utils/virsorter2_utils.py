@@ -282,7 +282,11 @@ def generate_report(callback_url, token, workspace_name, shared_folder: Path, vi
     # In the case for DRAM-v compatability, save DRAM-v input
     # Check if affi-contigs exist. *could* check for presence of --prep-for-dramv flag in params, or just file presence
     affi_contigs_fp = virsorter2_output / 'for-dramv/viral-affi-contigs-for-dramv.tab'
+    print('VirSorter2Output')
+    print(os.listdir(virsorter2_output))
+    print(os.listdir(virsorter2_output / 'for-dramv'))
     if affi_contigs_fp.exists():
+        print('exists')
         affi_contigs_shock_fp = output_dir / 'affi-contigs.tab'
         shutil.copy(affi_contigs_fp, affi_contigs_shock_fp)
 
