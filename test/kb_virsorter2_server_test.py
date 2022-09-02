@@ -70,12 +70,13 @@ class kb_virsorter2Test(unittest.TestCase):
         bins_ref = "31160/72/1"  # KBaseMetagenomes.BinnedContigs-1.0 / VirSorter_binnedContigs --> verified working
         assembly_set_ref = "31160/80/1"  # KBaseSets.AssemblySet‑1.2 / VirSorter-cat1256-AssemblySet --> verified works
         contigset_ref = ""  # TODO KBaseGenomes.ContigSet
+        headerless_assembly_ref = "67864/10/1"  # KBaseGenomeAnnotations.Assembly-3.0 --> verified with bad fasta
 
         ret = self.serviceImpl.run_kb_virsorter2(
             self.ctx,
             {
                 'workspace_name': self.wsName,
-                'genomes': assembly_set_ref,
+                'genomes': headerless_assembly_ref,
                 'enable_dramv': '1',  # Default = 0
                 'exclude_short': '0',  #
                 'viral_gene_required': '0',

@@ -199,6 +199,31 @@ def process_kbase_object(genomes_ref, shared_folder: Path, callback, workspace, 
     else:
         raise ValueError(f'{genomes_type} is not supported.')
 
+    # Need to test for appropriate FASTA file
+    malformed = False
+    with open(records_fp) as records_fh:
+        for line in records_fh:
+            if line.startswith('>'):
+                break
+            else:  # Ugh, malformed fasta file was passed via KBase (???)
+                logging.info('WARNING: Malformed FASTA file identified.')
+                malformed = True
+
+    if malformed:
+        fixed_records_fp = Path(records_fp).name + '.fixed.fasta'
+        start = False
+        with open(records_fp) as records_fh, open(fixed_records_fp, 'w') as fixed_records_fh:
+            for line in records_fh:
+                if line.startswith('>'):
+                    start = True  # Until the 1st > is found, discard all lines
+
+                if start:
+                    fixed_records_fh.write(line)
+                else:
+                    continue
+
+        records_fp = fixed_records_fp
+
     logging.info(f'{virus_count} sequences were identified.')
 
     return records_fp

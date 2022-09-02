@@ -1,6 +1,13 @@
 # kb_virsorter2 release notes
 =========================================
 
+0.1.0
+------
+* Official beta release
+* Added a check to ensure correctly formatted FASTA files
+* Removed superfluous output
+* Additional local KBase object test
+
 0.0.16
 ------
 * Almost finished flags...
