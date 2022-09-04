@@ -37,7 +37,8 @@
             "text_options": {
                 "valid_ws_types": [
                     "KBaseGenomeAnnotations.Assembly"
-                ]
+                ],
+                "is_output_name": true
             }
         },
         {
