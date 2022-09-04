@@ -12,6 +12,7 @@ module kb_virsorter2 {
         string report_name;
         string report_ref;
         obj_ref genomes;
+        string assembly_object_name;
         string minimum_score;
         string minimum_length;
         string keep_original;

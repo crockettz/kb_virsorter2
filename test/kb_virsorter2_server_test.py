@@ -82,6 +82,7 @@ class kb_virsorter2Test(unittest.TestCase):
                 'viral_gene_required': '0',
                 'viral_gene_enrichment': '0',
                 'require_all_hallmarks': '0',
+                'assembly_object_name': 'kb_virsorter',
                 'max_orfs': '-1',  # Default = -1 here, but repo is not
                 'keep_original': '0',  # Trim sequence
                 'require_short_hallmarks': '0',  # Don't require

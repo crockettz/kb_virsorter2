@@ -28,6 +28,19 @@
             }
         },
         {
+            "id": "assembly_object_name",
+            "optional": false,
+            "advanced": false,
+            "allow_multiple": false,
+            "default_values": [ "VirSorter2_Assembly" ],
+            "field_type": "text",
+            "text_options": {
+                "valid_ws_types": [
+                    "KBaseGenomeAnnotations.Assembly"
+                ]
+            }
+        },
+        {
             "id": "enable_dramv",
             "optional": true,
             "advanced": false,
@@ -231,6 +244,10 @@
                     "input_parameter": "genomes",
                     "target_property": "genomes",
                     "target_type_transform": "resolved-ref"
+                },
+                {
+                    "input_parameter": "assembly_object_name",
+                    "target_property": "assembly_object_name"
                 },
                 {
                     "input_parameter": "enable_dramv",

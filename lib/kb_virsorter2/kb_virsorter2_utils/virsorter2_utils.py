@@ -229,7 +229,7 @@ def process_kbase_object(genomes_ref, shared_folder: Path, callback, workspace, 
     return records_fp
 
 
-def generate_report(callback_url, token, workspace_name, shared_folder: Path, virsorter2_output: Path):
+def generate_report(callback_url, token, workspace_name, assembly_name, shared_folder: Path, virsorter2_output: Path):
     """
 
     Save the 3 results files for external use (e.g. download)
@@ -240,6 +240,7 @@ def generate_report(callback_url, token, workspace_name, shared_folder: Path, vi
     :param callback_url:
     :param token: Job token
     :param workspace_name: Workspace name
+    :param assembly_name: Name of assembly
     :param shared_folder: KBase working directory on the node, used to save the HTML file
     :param virsorter2_output: VirSorter2 proper final results directory, should have the summary file
     :return:
@@ -295,7 +296,7 @@ def generate_report(callback_url, token, workspace_name, shared_folder: Path, vi
             'file': {
                 'path': str(assembly_fp)
             },
-            'assembly_name': 'VirSorter2-Assembly',
+            'assembly_name': assembly_name,
             'workspace_name': workspace_name
         }
     )

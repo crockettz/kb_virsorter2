@@ -76,6 +76,7 @@ class kb_virsorter2:
         # Parse results from VirSorter2
         logging.info('VirSorter2 run complete, sending results to KBase workspace')
         report_info = generate_report(self.callback_url, ctx['token'], params.get('workspace_name'),
+                                      params.get('assembly_object_name'),
                                       self.shared_folder, virsorter2_dir)
         report_output = {
             'report_name': report_info['name'],

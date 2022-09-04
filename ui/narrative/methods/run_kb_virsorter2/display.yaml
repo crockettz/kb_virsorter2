@@ -137,6 +137,13 @@ parameters :
         long-hint: |
             Classifiers of viral groups to included (dsDNAphage,NCLDV,RNA,ssDNA,lavidaviridae)
 
+    assembly_object_name:
+        ui-name: |
+            Output assembly
+        short-hint: |
+            Assembly object name
+        long-hint: |
+            Name of the resulting assembly object
 
 description : |
     <p>VirSorter2 is a DNA and RNA virus identification tool that leverages genome-informed database advances across
