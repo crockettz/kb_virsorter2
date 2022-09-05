@@ -1,6 +1,10 @@
 # kb_virsorter2 release notes
 =========================================
 
+0.1.2
+------
+* Adjust assembly naming of object on KBase
+
 0.1.1
 ------
 * Allow users to change assembly object name
