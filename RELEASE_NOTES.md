@@ -1,6 +1,11 @@
 # kb_virsorter2 release notes
 =========================================
 
+1.0.0
+------
+* Bump version in preparation for official release!
+* Add icon
+
 0.1.2
 ------
 * Adjust assembly naming of object on KBase
