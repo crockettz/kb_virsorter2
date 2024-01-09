@@ -1,6 +1,10 @@
 # kb_virsorter2 release notes
 =========================================
 
+1.0.1 
+------
+* Change included_groups to required in spec.json so users can't run without a selection.
+
 1.0.0
 ------
 * Bump version in preparation for official release!
